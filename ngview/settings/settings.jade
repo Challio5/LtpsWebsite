@@ -1,0 +1,33 @@
+
+//
+
+md-card(layout="column" ng-keypress="editModeOff($event)" ng-controller="dataCtrl").md-padding
+    md-list
+        md-item.indexFix
+            md-subheader.indexFix.md-no-sticky User
+        md-item(ng-repeat="(key, prop) in user.currentUser")
+            div(ng-hide="isObject(prop)", layout="row", layout-wrap)
+                p(flex="10")
+                p(flex="40") {{key}}
+
+                p(flex="40" ng-hide="editMode.index == $index") {{prop}}
+                input(flex="40" type="text" ng-model="user.currentUser[key]" ng-show="editMode.index == $index")
+
+                md-icon(flex="10" md-svg-src="img/icon/settings.svg" ng-repeat="item in editable" ng-show="$parent.key == item" ng-click="edit($parent.$index, key)")
+
+            div(ng-show="$index == 3")
+                md-divider.indexFix
+                md-subheader.indexFix.md-no-sticky Account
+
+            div(ng-show="$index == 6")
+                md-divider.indexFix
+                md-subheader.indexFix.md-no-sticky Enabled
+
+        md-item
+            md-divider.indexFix
+            md-subheader.indexFix.md-no-sticky NFC
+        md-item(ng-repeat="item in user.currentUser.nfcCards", layout="row", layout-wrap)
+            p(flex="10")
+            p(flex="40") Id
+            p(flex="40") {{item.cardId}}
+            md-icon(flex="10" ng-click="removeNfcCard($index)") X

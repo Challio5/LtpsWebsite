@@ -1,0 +1,41 @@
+//
+   Created by rob on 18-11-15.
+
+md-dialog(aria-label="login screen" ng-keypress="redirectLogin($event)")
+    md-content.md-padding
+        form(name="loginForm" ng-show="!show")
+            div(layout layout-sm="column")
+                md-input-container(flex)
+                    label Username
+                    input(ng-model="login.username" type="text" ng-minlength="3" ng-maxlength="50" placeholder=".." required).dialog-close
+                md-input-container(flex)
+                    label Password
+                    input(ng-model="login.password" type="password" ng-minlength="3" ng-maxlength="50" placeholder="..." required)
+
+            div(layout layout-sm="column" layout-align="center center" ng-show="!show")
+                a(ng-click="show = true; button = 'save'") No account?
+
+        form(name="submitForm" ng-show="show")
+            div
+                md-input-container(flex)
+                    label Name
+                    input(ng-model="user.currentUser.name" ng-minlength="3" ng-maxlength="50" type="text" placeholder=".." required)
+                md-input-container(flex)
+                    label Email
+                    input(ng-model="user.currentUser.email" ng-minlength="5" ng-maxlength="50" type="email" placeholder=".." required)
+                md-input-container(flex)
+                    label Telephone
+                    input(ng-model="user.currentUser.telephone" ng-minlength="5" ng-maxlength="25" placeholder=".." required)
+            div(layout layout-sm="column")
+                md-input-container(flex)
+                    label Username
+                    input(ng-model="user.currentUser.username" ng-minlength="3" ng-maxlength="50" type="text" placeholder=".." required)
+                md-input-container(flex)
+                    label Password
+                    input(ng-model="user.currentUser.password" ng-minlength="3" ng-maxlength="50" type="password" placeholder="..." required)
+
+    div.md-actions(layout="row" ng-show="!show")
+        md-button(ng-click="login()" ng-disabled="loginForm.$invalid").md-primary Login
+
+    div.md-actions(layout="row" ng-show="show")
+        md-button(ng-click="addUser()" ng-disabled="submitForm.$invalid").md-primary Save

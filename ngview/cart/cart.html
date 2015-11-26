@@ -1,0 +1,35 @@
+
+<!--
+Created by rob on 20-11-15.
+
+-->
+<md-card layout="column" class="md-padding">
+  <div layout="row">
+    <p flex="90" style="text-align: center"></p>
+    <p flex="10" style="text-align: right" ng-click="deleteOrder()">X</p>
+  </div>
+  <div>
+    <md-list>
+      <md-item layout="row" layout-wrap="layout-wrap">
+        <p flex="10"></p>
+        <p flex="25" style="text-align: left">Amount</p>
+        <p flex="25" style="text-align: center">Name</p>
+        <p flex="25" style="text-align: right">Price</p>
+      </md-item>
+      <md-divider></md-divider>
+      <p></p>
+      <md-item ng-repeat="item in cart.products.items" layout="row" layout-wrap="layout-wrap"><span flex="5" style="text-align: center" ng-click="increase($index)">+</span><span flex="5" style="text-align: center" ng-click="decrease($index)">-</span><span flex="25" style="text-align: left">{{item.amount}}</span><span flex="25" style="text-align: center">{{item.name}}</span><span flex="25" style="text-align: right">{{item.price * item.amount | currency:"€"}}</span><span flex="15" style="text-align: right" ng-click="deleteProductOrder($index)">X</span></md-item>
+    </md-list>
+    <p></p>
+    <md-divider layout="row" layout-wrap="layout-wrap">
+      <p flex="10"></p>
+      <p flex="25" style="text-align: left">{{cart.products.items | sumByKey:'amount'}}</p>
+      <p flex="25" style="text-align: center">-</p>
+      <p flex="25" style="text-align: right">{{cart.products.items | sumByDoubleKey:'amount':'price' | currency:"€"}}</p>
+    </md-divider>
+  </div>
+  <div layout="row" layout-align="start center" layout-wrap="layout-wrap">
+    <p flex="10"></p>
+    <md-button flex="75" ng-disabled="cart.products.items.length == 0" ng-click="createOrder($event)" aria-label="order" style="margin-left: 0">Order</md-button>
+  </div>
+</md-card>

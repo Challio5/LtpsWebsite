@@ -1,0 +1,102 @@
+//
+   Created by rob on 16-11-15.
+
+doctype html
+html(lang="en")
+    head
+        title DrinkDispenser
+
+        base(href="/Website/")
+
+        link(rel="stylesheet", type="text/css", href="node_modules/angular-material/angular-material.min.css")
+        link(rel="stylesheet", type="text/css", href="index.css")
+
+    body(ng-app="app", ng-controller="mainCtrl", layout="row")
+
+        // Navigation menu (1th column)
+        md-sidenav(md-component-id="sideNav", md-is-locked-open="$mdMedia('gt-sm')").md-sidenav-left.md-whiteframe-z2
+            // Account header
+            md-toolbar.md-tall.md-hue-2(layout-align="start center" layout="row")
+                div.inset
+                    //md-button(aria-label="Add" ng-click="showAdd($event)").md-fab.md-ink-ripple +
+                    md-button(aria-label="header" ng-click="showAdd($event)").md-fab.md-ink-ripple
+                        md-icon(md-svg-src="{{buttonsrc}}")
+                div.inset
+                    p.md-body-1 {{user.loggedUser.name}}
+
+                //md-fab-trigger(aria-haspopup="true" aria-expanded="false").align-with-text
+
+
+            // Navigation buttons
+            md-list
+                md-subheader Home
+                md-item(ng-repeat="item in menuItems")
+                    a(ng-href="{{item.href}}")
+                        md-item-content(md-ink-ripple, layout="row", layout-align="start center")
+                            div.inset
+                                md-icon(md-svg-src="{{item.icon}}")
+                            div.inset.md-body-1 {{item.title}}
+
+                div(ng-show="user.loggedUser.userId > 0")
+                    md-divider
+                    md-subheader User
+                    md-item(ng-repeat="item in userItems")
+                        a(ng-href="{{item.title}}/{{user.loggedUser.userId}}")
+                            md-item-content(md-ink-ripple, layout="row", layout-align="start center")
+                                div.inset
+                                    md-icon(md-svg-src="{{item.icon}}")
+                                div.inset.md-body-1 {{item.title}}
+
+        // Content (2th column)
+        div(flex layout="column", tabIndex="-1", role="main", ng-click="sidenavOut()")
+            // Breadcrumbtoolbar (1th row)
+            md-toolbar(layout="row").md-whiteframe-glow-z1.site-content-toolbar
+                //md-button.md-icon-button
+                //    md-icon(md-svg-icon="android" aria-label="android")
+
+                // Sidenav button
+                md-button(ng-click="sidenavToggle()", aria-label="menu", hide-gt-sm).md-icon-button
+                    md-icon(md-svg-icon="img/icon/hamburger.svg")
+
+                // Breadcrumbs
+                div(flex, layout="row").fill-height.md-toolbar-tools
+                    //breadcrumb.md-toolbar-item.md-headline
+                    //md-icon(md-svg-src="img/icon/chevron.svg")
+
+            // Products (2th row)
+            md-content(flex layout="column")
+                ng-view(flex="100")
+
+
+        // Dependency script
+        script(type="text/javascript", src="index.js")
+
+        // Config scripts
+        script(type="text/javascript", src="index/config/route.js")
+        script(type="text/javascript", src="index/config/config.js")
+        //script(type="text/javascript", src="index/config/error.js")
+
+        // Service scripts
+        script(type="text/javascript", src="index/service/cart.js")
+        script(type="text/javascript", src="index/service/breadcrumb.js")
+        script(type="text/javascript", src="index/service/user.js")
+        script(type="text/javascript", src="index/service/server.js")
+
+        // Directive scripts
+        script(type="text/javascript", src="index/directive/breadcrumb.js")
+
+        // Filter scripts
+        script(type="text/javascript", src="index/filter/sumByKey.js")
+        script(type="text/javascript", src="index/filter/sumByDoubleKey.js")
+
+        // Controller scripts
+        script(type="text/javascript", src="index/index.js")
+        script(type="text/javascript", src="ngview/login/login.js")
+        script(type="text/javascript", src="ngview/logout/logout.js")
+
+        script(type="text/javascript", src="ngview/category/category.js")
+        script(type="text/javascript", src="ngview/products/products.js")
+
+        script(type="text/javascript", src="ngview/cart/cart.js")
+        script(type="text/javascript", src="ngview/orders/orders.js")
+        script(type="text/javascript", src="ngview/settings/settings.js")

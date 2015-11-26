@@ -1,0 +1,10 @@
+//
+   Created by rob on 16-11-15.
+
+div(ng-controller="categoryCtrl", layout="row", layout-wrap).md-padding
+    md-card(ng-show="error.show")
+        p {{error.message}}
+    md-card(ng-repeat="item in products", ng-click="addBreadcrumb(item.name, item.productCategoryId)", flex="20", layout-align="center center")
+        img(ng-src="{{item.src}}", alt="{{item.name}}").md-card-image
+        md-card-footer
+            p {{item.name}}

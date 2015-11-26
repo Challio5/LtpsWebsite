@@ -1,0 +1,19 @@
+{
+  "name": "vending-system",
+  "version": "0.0.1",
+  "dependencies": {
+    "coffee-script": "*",
+    "browserify": "*",
+
+    "angular": "*",
+    "angular-route": "*",
+    "angular-messages": "*",
+
+    "angular-animate": "*",
+    "angular-aria": "*",
+    "angular-material": "*",
+
+    "jade": "*",
+    "node-sass": "*"
+  }
+}

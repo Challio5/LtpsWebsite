@@ -1,0 +1,12 @@
+
+<!--
+Created by rob on 16-11-15.
+
+-->
+<div ng-controller="productCtrl" layout="row" layout-wrap="layout-wrap" class="md-padding">
+  <md-card ng-repeat="item in products" ng-click="addToCart(item)" flex="30" layout-align="center center"><img ng-src="{{item.src}}" alt="{{item.name}}" class="md-card-image"/>
+    <md-card-footer>
+      <p>{{item.name}}</p>
+    </md-card-footer>
+  </md-card>
+</div>

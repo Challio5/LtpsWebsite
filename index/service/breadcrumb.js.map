@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "breadcrumb.js",
+  "sourceRoot": "",
+  "sources": [
+    "breadcrumb.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;EAAA,OAAO,CAAC,MAAR,CAAe,KAAf,CAAqB,CAAC,OAAtB,CAA8B,YAA9B,EAA4C,SAAA;WAAM;MAChD;QAAA,IAAA,EAAM,MAAN;QACA,IAAA,EAAM,GADN;OADgD;;EAAN,CAA5C;AAAA"
+}
