@@ -6,7 +6,6 @@
     function Server() {
       this.serverIp = '10.0.0.121';
       this.port = 8080;
-      this.debug = false;
     }
 
     return Server;

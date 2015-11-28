@@ -4,30 +4,31 @@
 md-card(layout="column").md-padding
     div(layout="row")
         p(flex="90" style="text-align: center")
-        p(flex="10" style="text-align: right" ng-click="deleteOrder()") X
+        md-icon(flex="10" md-svg-src="img/icon/cancel.svg" ng-click="deleteOrder()")
+        //p(flex="10" style="text-align: right" ng-click="deleteOrder()") X
     div()
         md-list
             md-item(layout="row", layout-wrap)
                 p(flex="10")
-                p(flex="25" style="text-align: left") Amount
-                p(flex="25" style="text-align: center") Name
-                p(flex="25" style="text-align: right") Price
+                p(flex="25" style="text-align: left").md-body-2 Amount
+                p(flex="25" style="text-align: center").md-body-2 Name
+                p(flex="25" style="text-align: right").md-body-2 Price
             md-divider
             p
             md-item(ng-repeat="item in cart.products.items", layout="row", layout-wrap)
-                span(flex="5" style="text-align: center" ng-click="increase($index)") +
-                span(flex="5" style="text-align: center" ng-click="decrease($index)") -
-                span(flex="25" style="text-align: left") {{item.amount}}
-                span(flex="25" style="text-align: center") {{item.name}}
-                span(flex="25" style="text-align: right") {{item.price * item.amount | currency:"€"}}
-                span(flex="15" style="text-align: right" ng-click="deleteProductOrder($index)") X
+                span(flex="5" style="text-align: center" ng-click="increase($index)").md-body-1 +
+                span(flex="5" style="text-align: center" ng-click="decrease($index)").md-body-1 -
+                span(flex="25" style="text-align: left").md-body-1 {{item.amount}}
+                span(flex="25" style="text-align: center").md-body-1 {{item.name}}
+                span(flex="25" style="text-align: right").md-body-1 {{item.price * item.amount | currency:"€"}}
+                span(flex="15" style="text-align: right" ng-click="deleteProductOrder($index)").md-body-1 X
         p
         md-divider(layout="row" layout-wrap)
             p(flex="10")
-            p(flex="25" style="text-align: left") {{cart.products.items | sumByKey:'amount'}}
-            p(flex="25" style="text-align: center") -
-            p(flex="25" style="text-align: right") {{cart.products.items | sumByDoubleKey:'amount':'price' | currency:"€"}}
+            p(flex="25" style="text-align: left").md-body-2 {{cart.products.items | sumByKey:'amount'}}
+            p(flex="25" style="text-align: center").md-body-2 -
+            p(flex="25" style="text-align: right").md-body-2 {{cart.products.items | sumByDoubleKey:'amount':'price' | currency:"€"}}
 
     div(layout="row", layout-align="start center", layout-wrap)
         p(flex="10")
-        md-button(flex="75" ng-disabled="cart.products.items.length == 0" ng-click="createOrder($event)", aria-label="order", style="margin-left: 0") Order
+        md-button(flex="75" ng-disabled="cart.products.items.length == 0" ng-click="createOrder($event)", aria-label="order", style="margin-left: 0").md-body-2 Order

@@ -4,48 +4,44 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   angular.module('app').controller('loginCtrl', LoginController = (function() {
-    LoginController.$inject = ['$scope', '$http', '$log', '$mdDialog', 'user', 'server'];
+    LoginController.$inject = ['$scope', '$http', '$log', '$mdDialog', 'user', 'server', 'debug'];
 
-    function LoginController(scope, http, log, mdDialog, user, server) {
+    function LoginController(scope, http, log, mdDialog, user, server, debug) {
       this.scope = scope;
       this.http = http;
       this.log = log;
       this.mdDialog = mdDialog;
       this.user = user;
       this.server = server;
-      this.debug = bind(this.debug, this);
+      this.debug = debug;
       this.addUser = bind(this.addUser, this);
       this.login = bind(this.login, this);
       this.redirectLogin = bind(this.redirectLogin, this);
       this.scope.user = this.user;
       this.scope.login = this.login;
       this.scope.telephone = "(\\\\+|04)[0-9]+";
-      this.scope.saveDisable = false;
       this.scope.login = {
         username: '',
         password: ''
       };
-      this.scope.loginDisable = false;
       this.scope.show = false;
       angular.extend(this.scope, {
         redirectLogin: this.redirectLogin,
         login: this.login,
-        addUser: this.addUser,
-        debug: this.debug
+        addUser: this.addUser
       });
     }
 
     LoginController.prototype.redirectLogin = function(keyEvent) {
-      if (keyEvent.which === 13 && this.scope.loginDisable === false) {
+      if (keyEvent.which === 13 && this.scope.loginForm.$invalid === false) {
         return this.login();
       }
     };
 
     LoginController.prototype.login = function() {
       var url;
-      this.log.debug(this.scope.loginForm);
-      if (this.server.debug === true) {
-        return this.debug();
+      if (this.debug.debug === true) {
+        return this.debug.login();
       } else {
         url = 'http://' + this.server.serverIp + ':' + this.server.port + '/user/search/findByUsernameAndPassword?user_name=' + this.scope.login.username + "&password=" + this.scope.login.password;
         this.log.debug('Preform GET request for user with url: ' + url);
@@ -74,44 +70,23 @@
 
     LoginController.prototype.addUser = function() {
       var url;
-      url = 'http://' + this.server.serverIp + ':' + this.server.port + '/user';
-      this.log.debug('Preform POST request for adding user with url: ' + url);
-      this.log.debug('Preform POST request for user with data: ');
-      this.log.debug(this.user.currentUser);
-      return this.http.post(url, this.user.currentUser).success((function(_this) {
-        return function(data, status, headers, config) {
-          var userId;
-          userId = headers('Location').split('/').pop();
-          _this.log.debug('Respons of POST request with returned headers: ');
-          _this.log.debug(headers());
-          _this.user.currentUser.userId = userId;
-          _this.user.loggedUser = _this.user.currentUser;
-          return _this.mdDialog.hide();
-        };
-      })(this));
-    };
-
-    LoginController.prototype.debug = function() {
-      this.user.loggedUser.userId = 999;
-      this.user.loggedUser.name = 'admin';
-      this.user.currentUser.userId = 999;
-      this.user.currentUser.name = 'admin';
-      this.user.currentUser.email = 'admin@admin.com';
-      this.user.currentUser.telephone = '123456789';
-      this.user.currentUser.username = 'admin';
-      this.user.currentUser.password = 'pass';
-      this.user.currentUser.balance = 10.0;
-      this.user.currentUser.enabled = true;
-      this.user.currentUser.nfcCards = [
-        {
-          cardId: 1237657
-        }, {
-          cardId: 2345897
-        }, {
-          cardId: 1329487
-        }
-      ];
-      return this.mdDialog.hide();
+      if (!this.debug.debug) {
+        url = 'http://' + this.server.serverIp + ':' + this.server.port + '/user';
+        this.log.debug('Preform POST request for adding user with url: ' + url);
+        this.log.debug('Preform POST request for user with data: ');
+        this.log.debug(this.user.currentUser);
+        return this.http.post(url, this.user.currentUser).success((function(_this) {
+          return function(data, status, headers, config) {
+            var userId;
+            userId = headers('Location').split('/').pop();
+            _this.log.debug('Respons of POST request with returned headers: ');
+            _this.log.debug(headers());
+            _this.user.currentUser.userId = userId;
+            _this.user.loggedUser = _this.user.currentUser;
+            return _this.mdDialog.hide();
+          };
+        })(this));
+      }
     };
 
     return LoginController;

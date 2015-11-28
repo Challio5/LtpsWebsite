@@ -4,9 +4,9 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   angular.module('app').controller('cartCtrl', CartController = (function() {
-    CartController.$inject = ['$scope', '$http', '$log', '$mdDialog', '$mdToast', 'cart', 'user', 'server'];
+    CartController.$inject = ['$scope', '$http', '$log', '$mdDialog', '$mdToast', 'cart', 'user', 'server', 'debug'];
 
-    function CartController(scope, http, log, mdDialog, mdToast, cart, user, server) {
+    function CartController(scope, http, log, mdDialog, mdToast, cart, user, server, debug) {
       this.scope = scope;
       this.http = http;
       this.log = log;
@@ -15,6 +15,8 @@
       this.cart = cart;
       this.user = user;
       this.server = server;
+      this.debug = debug;
+      this.feedback = bind(this.feedback, this);
       this.placeOrder = bind(this.placeOrder, this);
       this.createOrder = bind(this.createOrder, this);
       this.deleteProductOrder = bind(this.deleteProductOrder, this);
@@ -27,7 +29,8 @@
         deleteOrder: this.deleteOrder,
         deleteProductOrder: this.deleteProductOrder,
         createOrder: this.createOrder,
-        placeOrder: this.placeOrder
+        placeOrder: this.placeOrder,
+        feedback: this.feedback
       });
     }
 
@@ -44,25 +47,65 @@
     };
 
     CartController.prototype.deleteOrder = function() {
-      return this.cart.products.items = [];
+      var confirm;
+      confirm = this.mdDialog.confirm({
+        title: 'Attention',
+        content: 'You are about to remove all items from your cart',
+        ok: 'OK',
+        cancel: 'Cancel'
+      });
+      return this.mdDialog.show(confirm).then((function(_this) {
+        return function() {
+          var toast;
+          _this.log.debug('User clears cart');
+          _this.cart.products.items = [];
+          toast = _this.mdToast.simple().content('Cart is cleared').hideDelay(500).position("top right");
+          return _this.mdToast.show(toast);
+        };
+      })(this), (function(_this) {
+        return function() {
+          return _this.log.debug('User cancels clearing cart');
+        };
+      })(this));
     };
 
     CartController.prototype.deleteProductOrder = function(index) {
-      return this.cart.products.items.splice(index, 1);
+      var confirm;
+      confirm = this.mdDialog.confirm({
+        title: 'Attention',
+        content: 'You are about to remove all ' + this.cart.products.items[index].name + ' from your cart',
+        ok: 'OK',
+        cancel: 'Cancel'
+      });
+      return this.mdDialog.show(confirm).then((function(_this) {
+        return function() {
+          var item, toast;
+          _this.log.debug('User clears productamount from cart');
+          item = _this.cart.products.items.splice(index, 1);
+          toast = _this.mdToast.simple().content(item[0].name + ' is cleared from cart').hideDelay(500).position("top right");
+          return _this.mdToast.show(toast);
+        };
+      })(this), (function(_this) {
+        return function() {
+          return _this.log.debug('User cancels clearing productamount from cart');
+        };
+      })(this));
     };
 
     CartController.prototype.createOrder = function(ev) {
       if (this.user.loggedUser.userId < 0) {
         return this.mdDialog.show({
           controller: 'loginCtrl',
-          templateUrl: 'ngview/login/logout.html',
+          templateUrl: 'ngview/login/login.html',
           targetEvent: ev,
           clickOutsideToClose: true,
-          onRemoving: function() {
-            if (this.user.loggedUser.userId > 0) {
-              return this.scope.placeOrder();
-            }
-          }
+          onRemoving: (function(_this) {
+            return function() {
+              if (_this.user.loggedUser.userId > 0) {
+                return _this.scope.placeOrder();
+              }
+            };
+          })(this)
         });
       } else {
         return this.scope.placeOrder();
@@ -76,38 +119,45 @@
       this.log.debug('Preform POST request for order with url: ' + orderUrl);
       this.log.debug('Preform POST request for order with data: ');
       this.log.debug(this.cart.order);
-      return this.http.post(orderUrl, this.cart.order).success((function(_this) {
-        return function(data, status, headers, config) {
-          var i, len, orderId, productOrder, productOrderUrl, ref, toast;
-          orderId = headers('Location').split('/').pop();
-          _this.log.debug('Respons of POST request with returned headers: ');
-          _this.log.debug(headers());
-          productOrderUrl = 'http://' + _this.server.serverIp + ':' + _this.server.port + '/product_order';
-          ref = _this.cart.products.items;
-          for (i = 0, len = ref.length; i < len; i++) {
-            productOrder = ref[i];
-            _this.log.debug('Preform POST request for productorder with url: ' + productOrderUrl);
-            _this.log.debug('Preform POST request for order with data: ');
-            _this.log.debug(productOrder);
-            productOrder.orderId = orderId;
-            _this.http.post(productOrderUrl, productOrder).success(function(data, status, headers, config) {
-              _this.log.debug('Respons of POST request with returned headers: ');
-              return _this.log.debug(headers);
-            });
-          }
-          toast = _this.mdToast.simple().content('Order placed with id: ' + orderId).hideDelay(500).position("top right");
-          _this.mdToast.show(toast);
-          _this.cart.order = {
-            code: '',
-            statusId: 1,
-            machineId: null,
-            userId: 1
+      if (this.debug.debug) {
+        return this.feedback(999);
+      } else {
+        return this.http.post(orderUrl, this.cart.order).success((function(_this) {
+          return function(data, status, headers, config) {
+            var i, len, orderId, productOrder, productOrderUrl, ref;
+            orderId = headers('Location').split('/').pop();
+            _this.log.debug('Response of POST request with returned headers: ');
+            _this.log.debug(headers());
+            productOrderUrl = 'http://' + _this.server.serverIp + ':' + _this.server.port + '/product_order';
+            ref = _this.cart.products.items;
+            for (i = 0, len = ref.length; i < len; i++) {
+              productOrder = ref[i];
+              _this.log.debug('Preform POST request for productorder with url: ' + productOrderUrl);
+              _this.log.debug('Preform POST request for order with data: ');
+              _this.log.debug(productOrder);
+              productOrder.orderId = orderId;
+              _this.http.post(productOrderUrl, productOrder).success(function(data, status, headers, config) {
+                _this.log.debug('Response of POST request with returned headers: ');
+                return _this.log.debug(headers);
+              });
+            }
+            return _this.feedback(orderId);
           };
-          return _this.cart.products = {
-            items: []
-          };
-        };
-      })(this));
+        })(this));
+      }
+    };
+
+    CartController.prototype.feedback = function(orderId) {
+      var toast;
+      toast = this.mdToast.simple().content('Order placed with id: ' + orderId).hideDelay(500).position("top right");
+      this.mdToast.show(toast);
+      this.cart.order = {
+        code: '',
+        statusId: 1,
+        machineId: null,
+        userId: 1
+      };
+      return this.cart.products.items = [];
     };
 
     return CartController;

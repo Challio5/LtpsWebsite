@@ -3,8 +3,8 @@
 
 div(ng-controller="categoryCtrl", layout="row", layout-wrap).md-padding
     md-card(ng-show="error.show")
-        p {{error.message}}
-    md-card(ng-repeat="item in products", ng-click="addBreadcrumb(item.name, item.productCategoryId)", flex="20", layout-align="center center")
+        p.md-body-2 {{error.message}}
+    md-card(ng-repeat="item in categories", ng-click="addBreadcrumb(item.name, item.productCategoryId)", flex="20", layout-align="center center")
         img(ng-src="{{item.src}}", alt="{{item.name}}").md-card-image
         md-card-footer
-            p {{item.name}}
+            p.md-body-2 {{item.name}}

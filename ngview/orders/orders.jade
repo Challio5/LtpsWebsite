@@ -11,33 +11,34 @@ md-list(role="list")
     md-card(ng-repeat="order in orders", layout="column").md-padding
         div(layout="row")
             md-item.md-button(flex="95" style="margin-right: 0px; margin-left: 0px;" ng-click="order.show = !order.show" md-swipe-right="onSwipeRight($index)")
-                span Order with id: {{order.orderId}}
+                span.md-body-2 Order with id: {{order.orderId}}
             p(flex="5" style="text-align: right" ng-click="deleteOrder($index)" ng-show="order.statusId == 1") X
+            //md-icon(flex="5" md-svg-src="img/icon/cancel.svg" ng-click="deleteOrder($index)" ng-show="order.statusId == 1")
         div(ng-show="order.show")
             md-list
                 md-item(layout="row", layout-wrap)
-                    p(flex="10").md-body-1
-                    p(flex="20" style="text-align: left").md-body-1 Amount
-                    p(flex="20" style="text-align: center").md-body-1 Name
-                    p(flex="20" style="text-align: center").md-body-1 Cost
-                    p(flex="20" style="text-align: right").md-body-1 Total
+                    p(flex="10").md-body-2
+                    p(flex="20" style="text-align: left").md-body-2 Amount
+                    p(flex="20" style="text-align: center").md-body-2 Name
+                    p(flex="20" style="text-align: center").md-body-2 Cost
+                    p(flex="20" style="text-align: right").md-body-2 Total
                 md-divider
                 p
                 md-item(ng-repeat="productOrder in order._embedded.productOrders", layout="row", layout-wrap)
                     span(flex="5")
-                        span(ng-show="order.statusId == 1" ng-click="increase($parent.$index, $index)") +
+                        span(ng-show="order.statusId == 1" ng-click="increase($parent.$index, $index)").md-body-1 +
                     span(flex="5")
-                        span(ng-show="order.statusId == 1" ng-click="decrease($parent.$index, $index)") -
+                        span(ng-show="order.statusId == 1" ng-click="decrease($parent.$index, $index)").md-body-1 -
 
-                    span(flex="20" style="text-align: left") {{productOrder.amount}}
-                    span(flex="20" style="text-align: center") {{productOrder.product.name}}
-                    span(flex="20" style="text-align: center") {{productOrder.price | currency:"€"}}
-                    span(flex="20" style="text-align: right") {{productOrder.price * productOrder.amount | currency:"€"}}
-                    span(flex="10" style="text-align: right" ng-show="order.statusId == 1" ng-click="deleteProductOrder($parent.$index, $index)") X
+                    span(flex="20" style="text-align: left").md-body-1 {{productOrder.amount}}
+                    span(flex="20" style="text-align: center").md-body-1 {{productOrder.product.name}}
+                    span(flex="20" style="text-align: center").md-body-1 {{productOrder.price | currency:"€"}}
+                    span(flex="20" style="text-align: right").md-body-1 {{productOrder.price * productOrder.amount | currency:"€"}}
+                    span(flex="10" style="text-align: right" ng-show="order.statusId == 1" ng-click="deleteProductOrder($parent.$index, $index)").md-body-1 X
             p
             md-divider(layout="row" layout-wrap)
                 p(flex="10")
-                p(flex="20" style="text-align: left").md-body-1 {{order._embedded.productOrders | sumByKey:'amount'}}
-                p(flex="20" style="text-align: center").md-body-1 -
-                p(flex="20" style="text-align: center").md-body-1 -
-                p(flex="20" style="text-align: right").md-body-1 {{order._embedded.productOrders | sumByDoubleKey:'amount':'price' | currency:"€"}}
+                p(flex="20" style="text-align: left").md-body-2 {{order._embedded.productOrders | sumByKey:'amount'}}
+                p(flex="20" style="text-align: center").md-body-2 -
+                p(flex="20" style="text-align: center").md-body-2 -
+                p(flex="20" style="text-align: right").md-body-2 {{order._embedded.productOrders | sumByDoubleKey:'amount':'price' | currency:"€"}}

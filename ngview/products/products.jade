@@ -5,4 +5,4 @@ div(ng-controller="productCtrl", layout="row", layout-wrap).md-padding
     md-card(ng-repeat="item in products", ng-click="addToCart(item)", flex="30", layout-align="center center")
         img(ng-src="{{item.src}}", alt="{{item.name}}").md-card-image
         md-card-footer
-            p {{item.name}}
+            p.md-body-2 {{item.name}}

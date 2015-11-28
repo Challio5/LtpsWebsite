@@ -4,16 +4,16 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   angular.module('app').controller('dataCtrl', DataController = (function() {
-    DataController.$inject = ['$scope', '$http', '$log', 'user', 'server'];
+    DataController.$inject = ['$scope', '$http', '$log', 'user', 'server', 'debug'];
 
-    function DataController(scope, http, log, user, server) {
+    function DataController(scope, http, log, user, server, debug) {
       this.scope = scope;
       this.http = http;
       this.log = log;
       this.user = user;
       this.server = server;
+      this.debug = debug;
       this.removeNfcCard = bind(this.removeNfcCard, this);
-      this.isObject = bind(this.isObject, this);
       this.editModeOff = bind(this.editModeOff, this);
       this.edit = bind(this.edit, this);
       this.scope.editMode = {
@@ -24,7 +24,6 @@
       angular.extend(this.scope, {
         edit: this.edit,
         editModeOff: this.editModeOff,
-        isObject: this.isObject,
         removeNfcCard: this.removeNfcCard
       });
     }
@@ -40,31 +39,33 @@
         data = "{\"" + this.scope.editMode.key + "\" : \"" + this.user.currentUser[this.scope.editMode.key] + "\"}";
         this.scope.editMode.index = -1;
         this.scope.editMode.key = '';
-        this.log.debug('Preform PATCH request for updating userdata with url: ' + this.user.currentUser._links.self.href.split('{')[0]);
-        this.log.debug('Preform PATCH request for updating orderamount with data: ');
-        this.log.debug(data);
-        return this.http.patch(this.user.currentUser._links.self.href.split('{')[0], data).success((function(_this) {
-          return function(data, status, headers, config) {
-            _this.log.debug('Respons of PATCH request with returned headers: ');
-            return _this.log.debug(headers());
-          };
-        })(this));
+        if (!this.debug.debug) {
+          this.log.debug('Preform PATCH request for updating userdata with url: ' + this.user.currentUser._links.self.href.split('{')[0]);
+          this.log.debug('Preform PATCH request for updating orderamount with data: ');
+          this.log.debug(data);
+          return this.http.patch(this.user.currentUser._links.self.href.split('{')[0], data).success((function(_this) {
+            return function(data, status, headers, config) {
+              _this.log.debug('Respons of PATCH request with returned headers: ');
+              return _this.log.debug(headers());
+            };
+          })(this));
+        }
       }
-    };
-
-    DataController.prototype.isObject = function(value) {
-      return angular.isObject(value);
     };
 
     DataController.prototype.removeNfcCard = function(index) {
       var url;
-      url = 'http://' + this.server.serverIp + ':' + this.server.port + '/nfc_card/' + this.user.currentUser.nfcCards[index].cardId;
-      this.log.debug('Preform DELETE request for deleting order with url: ' + url);
-      return this.http["delete"](url).success((function(_this) {
-        return function(data, status, headers, config) {
-          return _this.user.currentUser.nfcCards.splice(index, 1);
-        };
-      })(this));
+      if (this.debug.debug) {
+        return this.user.currentUser.nfcCards.splice(index, 1);
+      } else {
+        url = 'http://' + this.server.serverIp + ':' + this.server.port + '/nfc_card/' + this.user.currentUser.nfcCards[index].cardId;
+        this.log.debug('Preform DELETE request for deleting order with url: ' + url);
+        return this.http["delete"](url).success((function(_this) {
+          return function(data, status, headers, config) {
+            return _this.user.currentUser.nfcCards.splice(index, 1);
+          };
+        })(this));
+      }
     };
 
     return DataController;

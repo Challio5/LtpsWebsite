@@ -4,9 +4,9 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   angular.module('app').controller('productCtrl', ProductController = (function() {
-    ProductController.$inject = ['$scope', '$http', '$log', '$routeParams', '$mdToast', 'cart', 'server'];
+    ProductController.$inject = ['$scope', '$http', '$log', '$routeParams', '$mdToast', 'cart', 'server', 'debug'];
 
-    function ProductController(scope, http, log, routeParams, mdToast, cart, server) {
+    function ProductController(scope, http, log, routeParams, mdToast, cart, server, debug) {
       var url;
       this.scope = scope;
       this.http = http;
@@ -15,33 +15,33 @@
       this.mdToast = mdToast;
       this.cart = cart;
       this.server = server;
-      this.debug = bind(this.debug, this);
+      this.debug = debug;
       this.addToCart = bind(this.addToCart, this);
       this.scope.products = [];
-      if (this.routeParams.categoryId > '0') {
-        url = 'http://' + this.server.serverIp + ':' + this.server.port + '/products/search/findByProductCategoryId?productCategoryId=' + this.routeParams.categoryId;
-        this.log.debug('Preform GET request for products with url: ' + url);
-        this.http.get(url).success((function(_this) {
-          return function(response) {
-            var i, item, len, ref, results;
-            _this.log.debug('Response of GET request: ');
-            _this.log.debug(response);
-            ref = response._embedded.products;
-            results = [];
-            for (i = 0, len = ref.length; i < len; i++) {
-              item = ref[i];
-              results.push(_this.scope.products.push(item));
-            }
-            return results;
-          };
-        })(this));
-      }
-      if (this.server.debug === true) {
-        this.debug();
+      if (this.debug.debug === true) {
+        this.debug.productPush(this.scope.products);
+      } else {
+        if (this.routeParams.categoryId > '0') {
+          url = 'http://' + this.server.serverIp + ':' + this.server.port + '/products/search/findByProductCategoryId?productCategoryId=' + this.routeParams.categoryId;
+          this.log.debug('Preform GET request for products with url: ' + url);
+          this.http.get(url).success((function(_this) {
+            return function(response) {
+              var i, item, len, ref, results;
+              _this.log.debug('Response of GET request: ');
+              _this.log.debug(response);
+              ref = response._embedded.products;
+              results = [];
+              for (i = 0, len = ref.length; i < len; i++) {
+                item = ref[i];
+                results.push(_this.scope.products.push(item));
+              }
+              return results;
+            };
+          })(this));
+        }
       }
       angular.extend(this.scope, {
-        addToCart: this.addToCart,
-        debug: this.debug
+        addToCart: this.addToCart
       });
     }
 
@@ -64,44 +64,6 @@
         amount: 1,
         price: item.price
       });
-    };
-
-    ProductController.prototype.debug = function() {
-      if (this.routeParams.categoryId === '-2') {
-        this.scope.products.push({
-          productId: -1,
-          name: "Fries",
-          description: "Puntzak frites",
-          price: 1.5,
-          productCategoryId: this.routeParams.categoryID,
-          src: 'img/food/fries.jpeg'
-        });
-        return this.scope.products.push({
-          productId: -2,
-          name: "Hamburger",
-          description: "Broodje Hamburger",
-          price: 2.4,
-          productCategoryId: this.routeParams.categoryID,
-          src: 'img/food/hamburger.jpg'
-        });
-      } else if (this.routeParams.categoryId === '-1') {
-        this.scope.products.push({
-          productId: -3,
-          name: "Fanta",
-          description: "Blikje Fanta",
-          price: 1.8,
-          productCategoryId: this.routeParams.categoryID,
-          src: 'img/drinks/fanta.jpg'
-        });
-        return this.scope.products.push({
-          productId: -4,
-          name: "Cola",
-          description: "Blikje Cola",
-          price: 2.2,
-          productCategoryId: this.routeParams.categoryID,
-          src: 'img/drinks/cola.jpg'
-        });
-      }
     };
 
     return ProductController;
